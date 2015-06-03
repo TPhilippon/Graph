@@ -14,24 +14,6 @@ import numpy as np
 from matplotlib.patches import Polygon
 import numpy
 
-a=10
-i=0
-x=1
-d = {}
-while a>0:
-    x=x*2
-    d["tour"+str(i)]=x
-    i=i+1
-    a=a-1
-
-for key, value in d.iteritems():
-    print key, value
-    
-print d['tour1']
-print d['tour9']
-i=4
-y=int(d['tour'+str(i)])*5.5
-print y
 
 
 

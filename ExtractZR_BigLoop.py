@@ -115,33 +115,48 @@ while i < j:
 
     #------------ Lecture hdf et Extraction
 
-data_out ='/home/pressions/SATELITIME/Github/sdatats/Graph_data/'
+data_out ='/home/pressions/SATELITIME/sdatats/Graph_data/'
 data_in ='/home/pressions/SATELITIME/ddata/'+'chl_8d'+'/hdf/'
     #nsst_8d
     #pic_8d
     #sst11mic_8d
     #chl_8d
 
-files = os.listdir(data_in) #Liste ldes fichiers.
+files = os.listdir(data_in) #Liste les fichiers.
 files.sort() #Trie les fichiers.
 print len(files) #len = longueur de la liste de fichiers.
 
-stop = 3
-start = 1
-        
+stop = 3        #DELME (compteur pour 2 fichiers en test)
+start = 1       #DELME
+
+d2 = {}
+
 for myfile in files:
+    day= 185
+    day2= 0
+    b= 8 
+for a in range (2002,2016):
+    print a
+    while day2 < 365:
+        day2= day+7
+        if day2 > 365:
+            day2 = 365
+        if a % 4 == 0 and day2 == 365:
+            day2 = 366
+        
         i=1
         File = SD(data_in+myfile, SDC.READ) #   Lire depuis le hdf.
         l3 = File.select('l3m_data') #  Et met le contenu dans File.
         l3d = l3.get() #    Fonction get() pour avoir vraiment le tableau pour lire le hdf.
-        if start < stop:
+        print 'min/max :', l3d.min(),l3d.max() # On peut demander les valeurs min / max.
+
+        if start < stop:   #DELME
             while i <= p:
     
-                print 'min/max :', l3d.min(),l3d.max() # On peut demander les valeurs min / max.
                 ymaxZI = int(d['ymax'+str(i)])*43.2964
                 yminZI = int(d['ymin'+str(i)])*43.2964
-                xmaxZI = int(d["ymax"+str(i)])*43.2964
-                xminZI = int(d["ymin"+str(i)])*43.2964
+                xmaxZI = int(d['ymax'+str(i)])*43.2964
+                xminZI = int(d['ymin'+str(i)])*43.2964
     
                 varnum=3  # on a dl plusieurs variables (ligne 23)
                 varg=['sst11mic_8d','poc_8d', 'nsst_8d','chl_8d'][varnum]
@@ -168,22 +183,52 @@ for myfile in files:
 
                 print 'min/max :', l3d.min(),l3d.max()
     
-                numpy.save(data_out+'ZI_'+str(i), ZIl3dR)
-                A = np.array(str(data_out)+'ZI_'+str(i)+'.npy')
-                #numpy.read(A)
-              
-                np.average(str(A))
-                x,y = numpy.load(str(A))
+                filen = data_out+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.'+varg+'_ZI'
+                print filen+str(i)
                 
-                plt.plot(x,y,'o')
-
-                plt.xlabel('x')
-                plt.ylabel('y')
-                plt.title("Tracé"+str(i))
-
+                np.array([ZIl3dR])
+                numpy.save(filen+str(i), ZIl3dR)
+                
+                f = filen+str(i)+'.npy'
+                data = numpy.load(f)
+                data_mean = numpy.mean(data)
+                
+                d2['ZI'+str(i)] = data_mean
+                
+                
                 i=i+1
-                start = start+1
+                start = start+1  #DELME
+                
+                day= day+8
+        if a == 2015 and day2 == 32:
+            day2 = 365
+    day= 1
+    day2= 0
+                
+plt.plot(int(d2['ZI1']),'o')
+plt.plot(int(d2['ZI2']),'o')
+
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('filen')
 
 plt.show()
+                
+                   
+            
+        
+
+#np.mean('test.npy')
+#
+#x,y = numpy.load("test.npy")
+#
+#plt.plot(x,y,'o')
+#
+#plt.xlabel('x')
+#plt.ylabel('y')
+#plt.title("Tracé test")
+#
+#plt.show()                
+
 
 print 'Fin'

@@ -17,7 +17,7 @@ import numpy
 
 
 
-         #------------ Traitement mathématique et graphique
+         #------------ Traitement mathématique (moyenne) et sauvegarde en .npy
 
 data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/'
 
@@ -26,9 +26,9 @@ data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/'
 #files.sort() #Trie les fichiers.
 #print len(files) #len = longueur de la liste de fichiers.
 
-d = {}
+#d = {}
 i = 1       #ZI concernée(s). Inclure nouvelle boucle pour x courbe sur 1 graphe.
-key = 1     #Compteur pour le dictionnaire.
+#key = 1     #Compteur pour le dictionnaire.
 
 print "début boucle"
 
@@ -47,16 +47,15 @@ for a in range (2002,2003):
         filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.chl_8d_ZI'
         myfile = filen+str(i)+'.npy'
         
-        print filen            
+        print myfile            
         data = numpy.load(myfile)
         data_mean = numpy.mean(data)        
         numpy.save(filen+str(i)+'_mean', data_mean)
         #d[str(key)+'ZI'+str(i)] = data_mean
         #print d[str(key)+'ZI'+str(i)]
-        key = key +1
+        #key = key +1
         
 
-    #i = i+1
         day= day+8
     if a == 2015 and day2 == 32:
         day2 = 365

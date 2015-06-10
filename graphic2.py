@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jun  8 09:49:45 2015
+Created on Wed Jun 10 14:15:56 2015
 
 @author: upression1
 """
+
 
 import os
 import sys
@@ -26,14 +27,15 @@ data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/'
 #files.sort() #Trie les fichiers.
 #print len(files) #len = longueur de la liste de fichiers.
 
-d = {}
+d = []
 i = 1       #ZI concernée(s). Inclure nouvelle boucle pour x courbe sur 1 graphe.
-key = 1     #Compteur pour le dictionnaire.
+#key = 1      
 
 print "début boucle"
 
 day= 185
 day2= 0
+temps = 1
 
 for a in range (2002,2003):
     print a
@@ -45,34 +47,25 @@ for a in range (2002,2003):
             day2 = 366
 
         filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.chl_8d_ZI'
-        myfile = filen+str(i)+'.npy'
+        myfile = filen+str(i)+'_mean.npy'
         
-        print filen            
+        print myfile
+        
         data = numpy.load(myfile)
-        data_mean = numpy.mean(data)        
-        numpy.save(filen+str(i)+'_mean', data_mean)
-        #d[str(key)+'ZI'+str(i)] = data_mean
-        #print d[str(key)+'ZI'+str(i)]
-        key = key +1
-        
-
-    #i = i+1
+        print data            
+        plt.plot(temps, data, 'bo')
+#        d[int(key)] = data
+#        key = key +1
+        temps = temps +1
         day= day+8
     if a == 2015 and day2 == 32:
         day2 = 365
     day= 1
     day2= 0
 
-#print d
-#
-#temps = 1
-#
-#plt.axis([1, 4, 0.01, 10])
-#plt.title('Test')
-#for f in d:
-#        
-#    plt.plot(temps, f, 'bs')
-#    temps = temps +1
-#
-#
-#plt.show()
+#plt.plot(temps, d, '--bo')
+plt.axis([1, 4, 0.01, 0.15])
+plt.title('Test') 
+
+plt.show()
+print 'Fin'

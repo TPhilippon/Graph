@@ -27,7 +27,7 @@ data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/'
 #print len(files) #len = longueur de la liste de fichiers.
 
 #d = {}
-i = 1       #ZI concernée(s). Inclure nouvelle boucle pour x courbe sur 1 graphe.
+i = 1     #ZI concernée(s). Inclure nouvelle boucle pour x courbe sur 1 graphe.
 #key = 1     #Compteur pour le dictionnaire.
 
 print "début boucle"
@@ -37,19 +37,20 @@ day2= 0
 
 for a in range (2002,2003):
     print a
-    while day2 < 210:
+    while day2 < 230:
         day2= day+7
         if day2 > 365:
             day2 = 365
         if a % 4 == 0 and day2 == 365:
             day2 = 366
 
-        filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.chl_8d_ZI'
+        filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.L3m_8D_CHL_chlor_a_4km_ZI'
         myfile = filen+str(i)+'.npy'
         
         print myfile            
         data = numpy.load(myfile)
-        data_mean = numpy.mean(data)        
+        data_mean = numpy.mean(data)
+        print data_mean        
         numpy.save(filen+str(i)+'_mean', data_mean)
         #d[str(key)+'ZI'+str(i)] = data_mean
         #print d[str(key)+'ZI'+str(i)]
@@ -62,6 +63,8 @@ for a in range (2002,2003):
     day= 1
     day2= 0
 
+
+print 'fin'
 #print d
 #
 #temps = 1

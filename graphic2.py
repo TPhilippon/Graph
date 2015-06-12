@@ -18,7 +18,7 @@ import numpy
 
 
 
-         #------------ Traitement mathématique et graphique
+         #------------ Graphique
 
 data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/'
 
@@ -27,11 +27,12 @@ data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/'
 #files.sort() #Trie les fichiers.
 #print len(files) #len = longueur de la liste de fichiers.
 
-d = []
+
 i = 1       #ZI concernée(s). Inclure nouvelle boucle pour x courbe sur 1 graphe.
 #key = 1      
 
 print "début boucle"
+
 
 day= 185
 day2= 0
@@ -46,14 +47,43 @@ for a in range (2002,2003):
         if a % 4 == 0 and day2 == 365:
             day2 = 366
 
-        filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.chl_8d_ZI'
+        filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.L3m_8D_CHL_chlor_a_4km_ZI'
         myfile = filen+str(i)+'_mean.npy'
-        
         print myfile
         
         data = numpy.load(myfile)
         print data            
-        plt.plot(temps, data, 'bo')
+        plt.plot(temps, data, 'bs')
+#        d[int(key)] = data
+#        key = key +1
+        temps = temps +1
+        day= day+8
+    if a == 2015 and day2 == 32:
+        day2 = 365
+    day= 1
+    day2= 0
+    
+i = i+1
+day= 185
+day2= 0
+temps = 1
+
+for a in range (2002,2003):
+    print a
+    while day2 < 210:
+        day2= day+7
+        if day2 > 365:
+            day2 = 365
+        if a % 4 == 0 and day2 == 365:
+            day2 = 366
+
+        filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.L3m_8D_CHL_chlor_a_4km_ZI'
+        myfile = filen+str(i)+'_mean.npy'
+        print myfile
+        
+        data = numpy.load(myfile)
+        print data            
+        plt.plot(temps, data, 'g^')
 #        d[int(key)] = data
 #        key = key +1
         temps = temps +1
@@ -64,7 +94,7 @@ for a in range (2002,2003):
     day2= 0
 
 #plt.plot(temps, d, '--bo')
-plt.axis([1, 4, 0.01, 0.15])
+plt.axis([1, 4, 0, 0.5])
 plt.title('Test') 
 
 plt.show()

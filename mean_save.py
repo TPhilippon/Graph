@@ -37,14 +37,14 @@ day2= 0
 
 for a in range (2002,2003):
     print a
-    while day2 < 230:
+    while day2 < 248:
         day2= day+7
         if day2 > 365:
             day2 = 365
         if a % 4 == 0 and day2 == 365:
             day2 = 366
 
-        filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.L3m_8D_CHL_chlor_a_4km_ZI'
+        filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.L3m_8D_CHL_chlor_a_4km_ZI'   #
         myfile = filen+str(i)+'.npy'
         
         print myfile            

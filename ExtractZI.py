@@ -151,19 +151,19 @@ for myfile in files:
     l3 = File.select('l3m_data') #  Et met le contenu dans File.
     l3d = l3.get() #    Fonction get() pour avoir vraiment le tableau pour lire le hdf.
     #print 'min/max :', l3d.min(),l3d.max() # On peut demander les valeurs min / max.
-
+    l3d = np.dot(l3d,1.0)
     
     while i <= p:
 
-        ymaxZI = int(d['ymax'+str(i)])*43.2964
-        yminZI = int(d['ymin'+str(i)])*43.2964
-        xmaxZI = int(d['ymax'+str(i)])*43.2964
-        xminZI = int(d['ymin'+str(i)])*43.2964
+        ymaxZI = abs(int(d['ymax'+str(i)])*43.2964)
+        yminZI = abs(int(d['ymin'+str(i)])*43.2964)
+        xmaxZI = abs(int(d['xmax'+str(i)])*43.2964)
+        xminZI = abs(int(d['xmin'+str(i)])*43.2964)
 
         varnum=3  # on a dl plusieurs variables (ligne 23)
         varg=['sst11mic_8d','poc_8d', 'nsst_8d','chl_8d'][varnum]
         title=[u'Temperature de surface en °C',u'Carbone organique particlaire (POC) en mg.m-3',u'Temperature de surfarce nocturne en °C',u'Chlorophylle en mg.m-3'][varnum]
-        FillValue=[65535.0,-32737.0,-32737.0,-32737.0]
+        FillValue=[65535.0,-32737.0,-32737.0,-32737.0] #!!!!
         slI=[(0.00071718,-2),(1,0),(0.00071718,-2),(1,0)][varnum] # cette fois varnum récupère pente et intercept. 
         slope=slI[0] # égal au premier de la paire
         intercept=slI[1] 
@@ -176,19 +176,18 @@ for myfile in files:
 
         l3d[ (l3d < vmin) & (l3d != FillValue) ] = vmin #
         l3d[ l3d > 10 ] = 10.0 #
-        if l3d.any()<0.011:
-            l3d[ l3d == FillValue ] = np.nan #0.011 0.00001 #
+        l3d[ l3d == 65535.0 ] = np.nan #0.011 0.00001 #
 
-        ZIl3d=l3d[yminZI:ymaxZI,xminZI:xmaxZI] # Echantilloner la ZI. Distance lignes puis colonnes.
+        ZIl3d=l3d[yminZI:ymaxZI,xmaxZI:xminZI] # Echantilloner la ZI. Distance lignes puis colonnes.
         ZIl3dR=(ZIl3d*slope)+intercept
-        ZIl3dR=np.dot(ZIl3dR,1.0) #   CRUCIAL : transformation en objet numpy pour manipuler plus facilement
+        #ZIl3dR=np.dot(ZIl3dR,1.0) #   
 
-        print 'min/max :', l3d.min(),l3d.max()
+        #print 'min/max :', l3d.min(),l3d.max()
 
         filen = data_out+myfile[0:38]+'_ZI'  #'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.'+varg+
         print filen+str(i)
         
-        np.array([ZIl3dR])
+        #np.array([ZIl3dR])
         numpy.save(filen+str(i), ZIl3dR)
         
         #f = filen+str(i)+'.npy'

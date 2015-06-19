@@ -27,7 +27,7 @@ data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/'
 #print len(files) #len = longueur de la liste de fichiers.
 
 #d = {}
-i = 1     #ZI concernée(s). Inclure nouvelle boucle pour x courbe sur 1 graphe.
+i = 2     #ZI concernée(s). Inclure nouvelle boucle pour x courbe sur 1 graphe.
 #key = 1     #Compteur pour le dictionnaire.
 
 print "début boucle"
@@ -37,7 +37,7 @@ day2= 0
 
 for a in range (2002,2003):
     print a
-    while day2 < 240:
+    while day2 < 365:
         day2= day+7
         if day2 > 365:
             day2 = 365

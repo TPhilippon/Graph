@@ -5,13 +5,10 @@ Created on Tue Jun 16 14:05:46 2015
 @author: upression1
 """
 
-import os
-import sys  
-from mpl_toolkits.basemap import Basemap
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.patches import Polygon
-import numpy
+import matplotlib
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
 
          #------------ Import / lecture npy data
          
@@ -36,14 +33,33 @@ for a in range (2002,2003):
             day2 = 366
          
         filen = data_in+'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.L3m_8D_CHL_chlor_a_4km_'
-        myfile = filen+'ZE'
+        myfile = filen+'ZR.npy'
         print myfile
-         
-         
+        
+        data =np.load(myfile)
+        data2=np.array(data)
          
          #------------ Isoligne
          
-         
-         
+        iso = data2[ data2 > 1]
+        matplotlib.rcParams['xtick.direction']='out'
+        matplotlib.rcParams['ytick.direction']='out'
+        
+        delta = 0.025
+        x = np.arange(0.1, 2.0, delta)
+        y = np.arange(0.1, 2.0, delta)
+        
+        X, Y = np.meshgrid(x,y)
+        Z =mlab.bivariate_normal(X, Y, data2)
+        
          
          #------------ Affichage
+         
+        plt.figure()
+        CS = plt.contour (X, Y, Z)
+        plt.clabel(CS, inline=1, fontsize=10)
+        plt.title('test')
+        
+        plt.show()
+         
+         

@@ -88,7 +88,7 @@ for myfile in files:
     varnum=3  # on a dl plusieurs variables
     varg=['sst11mic_8d','poc_8d', 'nsst_8d','chl_8d'][varnum]
     title=[u'Temperature de surface en °C',u'Carbone organique particlaire (POC) en mg.m-3',u'Temperature de surfarce nocturne en °C',u'Chlorophylle en mg.m-3'][varnum]
-    FillValue=[65535.0,-32737.0,-32737.0,-32737.0]
+    FillValue=[65535.0,-32767.0,-32767.0,-32767.0]
     slI=[(0.00071718,-2),(1,0),(0.00071718,-2),(1,0)][varnum] #varnum récupère pente et intercept. 
     slope=slI[0] # égal au premier de la paire
     intercept=slI[1] 

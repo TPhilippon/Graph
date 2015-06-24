@@ -7,7 +7,7 @@ Created on Thu May 28 14:32:07 2015
 
 
 import os
-from PIL import Image
+from Ipython.display import Image
 import sys
 from pyhdf.SD import SD, SDC   
 from mpl_toolkits.basemap import Basemap
@@ -129,7 +129,6 @@ def draw_screen_poly( lats, lons, m):
 
 lats = [ latmin-2, latmax+2, latmax+2, latmin-2 ]
 lons = [ longmin-2, longmin-2, longmax+2, longmax+2 ]
-
 
 draw_screen_poly( lats, lons, m )
     

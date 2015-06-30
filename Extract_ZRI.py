@@ -26,7 +26,7 @@ variable = ['nsst_8d', 'pic_8d', 'sst11mic_8d', 'chl_8d'][varnum]
 data_out1 ='/home/pressions/SATELITIME/sdatats/Graph_data/ZR/' 
 data_out2 ='/home/pressions/SATELITIME/sdatats/Graph_data/ZI/'  #Unix
 data_in ='/home/pressions/SATELITIME/ddata/'+str(variable)+'/hdf/'
-# ==================================================================
+# ========================================================================
 def draw_screen_poly2( lats2, lons2, m):
     x, y = m( lons2, lats2 )
     xy = zip(x,y)
@@ -109,7 +109,7 @@ while i < j: # Selection des ZI
     choix =raw_input('Valider o/n?: ')
     
     if choix =="o": 
-        # ==== trouver lesbornes de l'ensemble des ZI pour un zoom
+        # ==== trouver lesbornes de l'ensemble des ZI pour un zoom =====
         if abs(float(llcrnrlat)) < latmin:
             latmin = llcrnrlat
         if abs(float(urcrnrlat)) > latmax:
@@ -118,13 +118,33 @@ while i < j: # Selection des ZI
             longmin = llcrnrlon
         if abs(float(urcrnrlon)) > longmax:
             longmax = urcrnrlon
-        
+            
         print "Coordonnées validées."
         j = j - 1
-        d['ymax'+str(n)] = urcrnrlat
-        d['ymin'+str(n)] = llcrnrlat
-        d['xmax'+str(n)] = urcrnrlon
-        d['xmin'+str(n)] = llcrnrlon
+        # ==============================================================
+        # =====Arrondi pour ajuster le cadre au pixel près =============
+        
+#        urcrnrlat = round((90-float(urcrnrlat))/0.04166666)
+#        llcrnrlat = round((90-float(llcrnrlat))/0.04166666)
+#        urcrnrlon = round((float(urcrnrlon)+179.9792)/0.04166667)
+#        llcrnrlon = round((float(llcrnrlon)+179.9792)/0.04166667)
+        
+        urcrnrlat = round(float(urcrnrlat)/0.08333333)
+        llcrnrlat = round(float(llcrnrlat)/0.08333333)
+        urcrnrlon = round(float(urcrnrlon)/0.08333333)
+        llcrnrlon = round(float(llcrnrlon)/0.08333333)
+        print urcrnrlat
+        
+#        d['ymax'+str(n)] = round(90-int(urcrnrlat)*0.04166666)
+#        d['ymin'+str(n)] = round(90-int(llcrnrlat)*0.04166666)
+#        d['xmax'+str(n)] = round(int(urcrnrlon)*0.04166667-179.9792)
+#        d['xmin'+str(n)] = round(int(llcrnrlon)*0.04166667-179.9792)
+        # ==============================================================
+        
+        d['ymax'+str(n)] = urcrnrlat*0.08333333
+        d['ymin'+str(n)] = llcrnrlat*0.08333333
+        d['xmax'+str(n)] = urcrnrlon*0.08333333
+        d['xmin'+str(n)] = llcrnrlon*0.08333333
         
         lats2 = [ d["ymin"+str(n)], d["ymax"+str(n)], d["ymax"+str(n)], d["ymin"+str(n)] ]
         lons2 = [ d["xmin"+str(n)], d["xmin"+str(n)], d["xmax"+str(n)], d["xmax"+str(n)] ]
@@ -162,7 +182,7 @@ im = plt.imshow(im,extent=(x-180,x+180,y+90,y-90), interpolation='none')
 plt.show()
 
 
-    #------------ Lecture hdf et Extraction (save)
+#--------------------- Lecture hdf et Extraction (save) ---------------------
 
 
 
@@ -193,10 +213,11 @@ for myfile in files:
 #    xminZR,xmaxZR=np.sort([abs(float(xmin)*43.2964),abs(float(xmax)*43.2964)])
 #    yminZR,ymaxZR=np.sort([abs(float(ymin)*43.2964),abs(float(ymax)*43.2964)])
     
-    xminZR,xmaxZR=np.sort([abs(float(xmin+179.9792)/0.04166667),abs(float(xmax+179.9792)/0.04166667)])
-    yminZR,ymaxZR=np.sort([abs(float(-ymin+90)/0.04166666),abs(float(-ymax+90)/0.04166667)])
+#    xminZR,xmaxZR=np.sort([abs(float(xmin+179.9792)/0.04166667),abs(float(xmax+179.9792)/0.04166667)])
+#    yminZR,ymaxZR=np.sort([abs(float(-ymin+90)/0.04166666),abs(float(-ymax+90)/0.04166667)])
     
-    
+    xminZR,xmaxZR=np.sort([abs(float(xmin)/0.08333333),abs(float(xmax)/0.08333333)])
+    yminZR,ymaxZR=np.sort([abs(float(ymin)/0.08333333),abs(float(ymax)/0.08333333)])
     
     print "xminZR,xmaxZR",xminZR,xmaxZR
     print "yminZR,ymaxZR",yminZR,ymaxZR
@@ -231,13 +252,14 @@ for myfile in files:
     ZIs=[]
     while i <= p:
 
-        xminZI,xmaxZI=np.sort([abs(float((d['xmin'+str(i)])+179.9792)/0.04166667),abs(float((d['xmax'+str(i)])+179.9792)/0.04166667)])
-        yminZI,ymaxZI=np.sort([abs(float(-(d['ymin'+str(i)])+90)/0.04166666),abs(float(-(d['ymax'+str(i)])+90)/0.04166667)])
+        xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)])+179.9792)/0.04166667)),abs(round((float(d['xmax'+str(i)])+179.9792)/0.04166667))])
+        yminZI,ymaxZI=np.sort([abs(round((-float(d['ymin'+str(i)])+90)/0.04166666)),abs(round((-float(d['ymax'+str(i)])+90)/0.04166667))])
 #        ymaxZI = abs(int(d['ymax'+str(i)])*43.2964)
 #        yminZI = abs(int(d['ymin'+str(i)])*43.2964)
 #        xmaxZI = abs(int(d['xmax'+str(i)])*43.2964)
 #        xminZI = abs(int(d['xmin'+str(i)])*43.2964)
-
+        print xminZI, xmaxZI
+        print yminZI, ymaxZI
 #        l3d[ (l3d < vmin) & (l3d != FillValue) ] = vmin #
 #        l3d[ l3d > 10 ] = 10.0 #
         l3d[ l3d == FillValue[varnum] ] = np.nan #0.011 0.00001 #

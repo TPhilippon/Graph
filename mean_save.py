@@ -9,6 +9,7 @@ import os
 import numpy as np
 import scipy
 from scipy import stats
+import matplotlib.pyplot as plt
 
          #------------ Traitement mathématique (moyenne) et sauvegarde en .npy
 
@@ -30,8 +31,9 @@ for numzi in range(1,j+1):
 expr=[('date','i8')]+expr    
 print expr
 arr = np.zeros((f,),dtype=expr)
-# ------------------------- Fin creation matrice ------------------------------------
+# ------------------------- Fin creation matrice ----------------------------------
 
+# ------------------------- Boucle data stockage -----------------------------------
 i = 0
 for myfile in files:
     
@@ -56,7 +58,18 @@ for myfile in files:
     print dline
     arr[i]=tuple(dline)
     i=i+1
-  
+
+# ------------------------- Plot graphique -----------------------------------
+
+plt.plot(arr['zi1moy'], label='Moyenne')
+plt.plot(arr['zi1et'], label='Ecart-type')
+
+#plt.axis([0,arr.all['date'],0,1])
+#plt.title('Valeurs moyennes de concentration en chlorophylle-a') 
+plt.xlabel('Temps')
+#plt.ylabel('[chlor-a] : mg/m3')
+
+plt.show()
 
 print 'fin'
 

@@ -16,7 +16,24 @@ import numpy as np
 from matplotlib.patches import Polygon
 import numpy
 
-     #------------ Choix de la zone d'étude
+# =========================== Definition Varaibles =======================
+varnum = 3
+variable = ['nsst_8d', 'pic_8d', 'sst11mic_8d', 'chl_8d'][varnum]
+
+#data_out ='Y:\\home\\pressions\\SATELITIME\\sdatats\\Graph_data\\'   #Win
+#data_in ='Y:\\SATELITIME\\ddata\\'+str(variable)+'\\hdf'
+
+data_out1 ='/home/pressions/SATELITIME/sdatats/Graph_data/ZR/' 
+data_out2 ='/home/pressions/SATELITIME/sdatats/Graph_data/ZI/'  #Unix
+data_in ='/home/pressions/SATELITIME/ddata/'+str(variable)+'/hdf/'
+# ==================================================================
+def draw_screen_poly2( lats2, lons2, m):
+    x, y = m( lons2, lats2 )
+    xy = zip(x,y)
+    poly = Polygon( xy, edgecolor='black', fill=False, alpha=1.5 )
+    plt.gca().add_patch(poly)
+
+#---------------------------- Choix de la zone d'étude -------------------------
 
 print "Choix de la zone régionale, patienez..."
 #m = Basemap(projection='cyl',resolution='c')
@@ -72,8 +89,8 @@ plt.show()
 j =raw_input('Combien de ZI à délimiter?: ')
 j = int(j)
 
-p = j
-i = 0
+p = j       #nombre de ZI gardée en mémoire
+i = 0       #compteur des ZI pour déroulement boucle
 n = 1       #Compteur pour les max/min coordonnées
 d ={}
 latmin = 9999
@@ -81,7 +98,7 @@ latmax = -9999
 longmin = 9999
 longmax = -9999
 
-while i < j:
+while i < j: # Selection des ZI
     print "ZI restantes:"
     print j
     print "Entrez vos coordonnées:"
@@ -92,14 +109,14 @@ while i < j:
     choix =raw_input('Valider o/n?: ')
     
     if choix =="o": 
-        
-        if abs(int(llcrnrlat)) < latmin:
+        # ==== trouver lesbornes de l'ensemble des ZI pour un zoom
+        if abs(float(llcrnrlat)) < latmin:
             latmin = llcrnrlat
-        if abs(int(urcrnrlat)) > latmax:
+        if abs(float(urcrnrlat)) > latmax:
             latmax = urcrnrlat
-        if abs(int(llcrnrlon)) < longmin:
+        if abs(float(llcrnrlon)) < longmin:
             longmin = llcrnrlon
-        if abs(int(urcrnrlon)) > longmax:
+        if abs(float(urcrnrlon)) > longmax:
             longmax = urcrnrlon
         
         print "Coordonnées validées."
@@ -109,21 +126,17 @@ while i < j:
         d['xmax'+str(n)] = urcrnrlon
         d['xmin'+str(n)] = llcrnrlon
         
-        def draw_screen_poly2( lats2, lons2, m):
-            x, y = m( lons2, lats2 )
-            xy = zip(x,y)
-            poly = Polygon( xy, edgecolor='black', fill=False, alpha=1.5 )
-            plt.gca().add_patch(poly)
-
         lats2 = [ d["ymin"+str(n)], d["ymax"+str(n)], d["ymax"+str(n)], d["ymin"+str(n)] ]
         lons2 = [ d["xmin"+str(n)], d["xmin"+str(n)], d["xmax"+str(n)], d["xmax"+str(n)] ]
-
+        
+        print lats2,lons2
         draw_screen_poly2( lats2, lons2, m )
         n = n + 1
+        
     else:
         print "recommencez."
         
-print "Chargement de la région..."
+print "Chargement..."
 
 latminr = (float(latmin)-0.1)
 latmaxr = (float(latmax)+0.1)
@@ -151,15 +164,7 @@ plt.show()
 
     #------------ Lecture hdf et Extraction (save)
 
-varnum = 3
-variable = ['nsst_8d', 'pic_8d', 'sst11mic_8d', 'chl_8d'][varnum]
 
-#data_out ='Y:\\home\\pressions\\SATELITIME\\sdatats\\Graph_data\\'   #Win
-#data_in ='Y:\\SATELITIME\\ddata\\'+str(variable)+'\\hdf'
-
-data_out1 ='/home/pressions/SATELITIME/sdatats/Graph_data/ZR/' 
-data_out2 ='/home/pressions/SATELITIME/sdatats/Graph_data/ZI/'  #Unix
-data_in ='/home/pressions/SATELITIME/ddata/'+str(variable)+'/hdf/'
 
 print data_in
     #nsst_8d  
@@ -184,10 +189,17 @@ for myfile in files:
     #print 'min/max :', l3d.min(),l3d.max() # On peut demander les valeurs min / max.
     l3d = np.dot(l3d,1.0)
 
-    xminZR,xmaxZR=np.sort([abs(float(xmin)*43.2964),abs(float(xmax)*43.2964)])
-    yminZR,ymaxZR=np.sort([abs(float(ymin)*43.2964),abs(float(ymax)*43.2964)])
 
-    varnum=3  # on a dl plusieurs variables
+#    xminZR,xmaxZR=np.sort([abs(float(xmin)*43.2964),abs(float(xmax)*43.2964)])
+#    yminZR,ymaxZR=np.sort([abs(float(ymin)*43.2964),abs(float(ymax)*43.2964)])
+    
+    xminZR,xmaxZR=np.sort([abs(float(xmin+179.9792)/0.04166667),abs(float(xmax+179.9792)/0.04166667)])
+    yminZR,ymaxZR=np.sort([abs(float(-ymin+90)/0.04166666),abs(float(-ymax+90)/0.04166667)])
+    
+    
+    
+    print "xminZR,xmaxZR",xminZR,xmaxZR
+    print "yminZR,ymaxZR",yminZR,ymaxZR
     varg=['sst11mic_8d','poc_8d', 'nsst_8d','chl_8d'][varnum]
     title=[u'Temperature de surface en °C',u'Carbone organique particlaire (POC) en mg.m-3',u'Temperature de surfarce nocturne en °C',u'Chlorophylle en mg.m-3'][varnum]
     FillValue=[65535.0,-32767.0,-32767.0,-32767.0]
@@ -203,6 +215,9 @@ for myfile in files:
 
     ZRl3d=l3d[yminZR:ymaxZR,xminZR:xmaxZR] # Echantilloner. Distance lignes puis colonnes.
     ZRl3dR=(ZRl3d*slope)+intercept
+    print "ZRl3d",ZRl3d
+    print "ZRl3dR",ZRl3dR
+    raw_input('jkjkl')
     ZRl3dR[ ZRl3dR == FillValue[varnum] ] = np.nan 
 
     filen = data_out1+myfile[0:38]+'_ZR'
@@ -213,12 +228,11 @@ for myfile in files:
     print(w)
     numpy.save(filen, ZRl3dR)   #myfile[:])+'ZR'
     
-    raw_input('t : ')
-
+    ZIs=[]
     while i <= p:
 
-        xminZI,xmaxZI=np.sort([abs(int(d['xmin'+str(i)])*43.2964),abs(int(d['xmax'+str(i)])*43.2964)])
-        yminZI,ymaxZI=np.sort([abs(int(d['ymin'+str(i)])*43.2964),abs(int(d['ymax'+str(i)])*43.2964)])
+        xminZI,xmaxZI=np.sort([abs(float((d['xmin'+str(i)])+179.9792)/0.04166667),abs(float((d['xmax'+str(i)])+179.9792)/0.04166667)])
+        yminZI,ymaxZI=np.sort([abs(float(-(d['ymin'+str(i)])+90)/0.04166666),abs(float(-(d['ymax'+str(i)])+90)/0.04166667)])
 #        ymaxZI = abs(int(d['ymax'+str(i)])*43.2964)
 #        yminZI = abs(int(d['ymin'+str(i)])*43.2964)
 #        xmaxZI = abs(int(d['xmax'+str(i)])*43.2964)
@@ -232,18 +246,22 @@ for myfile in files:
         ZIl3dR=(ZIl3d*slope)+intercept
         #ZIl3dR=np.dot(ZIl3dR,1.0) #   
 
-        filen = data_out2+myfile[0:38]+'_ZI'  #'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.'+varg+
-        print filen+str(i)
+        
         
         #ZIl3dR = np.array([ZIl3dR])
 #        l[s] = ZIl3dR  
 #        s=s+1   
         
-        numpy.save(filen+str(i), ZIl3dR)
-        
+        #numpy.save(filen+str(i), ZIl3dR)
+        ZIs=ZIs+[(yminZI,ymaxZI,xminZI,xmaxZI,d['ymin'+str(i)],d['ymax'+str(i)],d['xmin'+str(i)],d['xmax'+str(i)]),ZIl3dR]
         i=i+1                
 
 #numpy.savez(filen, l)
+    filen = data_out2+myfile[0:38]+'_ZI'  #'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.'+varg+
+    print filen
+    numpy.save(filen, ZIs)
 
 
 print 'Fin'
+
+

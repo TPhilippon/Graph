@@ -124,27 +124,27 @@ while i < j: # Selection des ZI
         # ==============================================================
         # =====Arrondi pour ajuster le cadre au pixel près =============
         
-#        urcrnrlat = round((90-float(urcrnrlat))/0.04166666)
-#        llcrnrlat = round((90-float(llcrnrlat))/0.04166666)
-#        urcrnrlon = round((float(urcrnrlon)+179.9792)/0.04166667)
-#        llcrnrlon = round((float(llcrnrlon)+179.9792)/0.04166667)
+        urcrnrlat = round((90-float(urcrnrlat))/0.04166666)
+        llcrnrlat = round((90-float(llcrnrlat))/0.04166666)
+        urcrnrlon = round((float(urcrnrlon)+180)/0.04166667)
+        llcrnrlon = round((float(llcrnrlon)+180)/0.04166667)
         
-        urcrnrlat = round(float(urcrnrlat)/0.08333333)
-        llcrnrlat = round(float(llcrnrlat)/0.08333333)
-        urcrnrlon = round(float(urcrnrlon)/0.08333333)
-        llcrnrlon = round(float(llcrnrlon)/0.08333333)
+#        urcrnrlat = round(float(urcrnrlat)/0.08333333)
+#        llcrnrlat = round(float(llcrnrlat)/0.08333333)
+#        urcrnrlon = round(float(urcrnrlon)/0.08333333)
+#        llcrnrlon = round(float(llcrnrlon)/0.08333333)
         print urcrnrlat
         
-#        d['ymax'+str(n)] = round(90-int(urcrnrlat)*0.04166666)
-#        d['ymin'+str(n)] = round(90-int(llcrnrlat)*0.04166666)
-#        d['xmax'+str(n)] = round(int(urcrnrlon)*0.04166667-179.9792)
-#        d['xmin'+str(n)] = round(int(llcrnrlon)*0.04166667-179.9792)
-        # ==============================================================
+        d['ymax'+str(n)] = (90-(int(urcrnrlat)*0.04166666))
+        d['ymin'+str(n)] = (90-(int(llcrnrlat)*0.04166666))
+        d['xmax'+str(n)] = ((int(urcrnrlon)*0.04166667)-180)
+        d['xmin'+str(n)] = (int(llcrnrlon)*0.04166667)-180)
         
-        d['ymax'+str(n)] = urcrnrlat*0.08333333
-        d['ymin'+str(n)] = llcrnrlat*0.08333333
-        d['xmax'+str(n)] = urcrnrlon*0.08333333
-        d['xmin'+str(n)] = llcrnrlon*0.08333333
+#        d['ymax'+str(n)] = urcrnrlat*0.08333333
+#        d['ymin'+str(n)] = llcrnrlat*0.08333333
+#        d['xmax'+str(n)] = urcrnrlon*0.08333333
+#        d['xmin'+str(n)] = llcrnrlon*0.08333333
+        # ==============================================================
         
         lats2 = [ d["ymin"+str(n)], d["ymax"+str(n)], d["ymax"+str(n)], d["ymin"+str(n)] ]
         lons2 = [ d["xmin"+str(n)], d["xmin"+str(n)], d["xmax"+str(n)], d["xmax"+str(n)] ]
@@ -213,11 +213,11 @@ for myfile in files:
 #    xminZR,xmaxZR=np.sort([abs(float(xmin)*43.2964),abs(float(xmax)*43.2964)])
 #    yminZR,ymaxZR=np.sort([abs(float(ymin)*43.2964),abs(float(ymax)*43.2964)])
     
-#    xminZR,xmaxZR=np.sort([abs(float(xmin+179.9792)/0.04166667),abs(float(xmax+179.9792)/0.04166667)])
-#    yminZR,ymaxZR=np.sort([abs(float(-ymin+90)/0.04166666),abs(float(-ymax+90)/0.04166667)])
+    xminZR,xmaxZR=np.sort([abs(float(xmin+179.9792)/0.04166667),abs(float(xmax+179.9792)/0.04166667)])
+    yminZR,ymaxZR=np.sort([abs(float(-ymin+90)/0.04166666),abs(float(-ymax+90)/0.04166667)])
     
-    xminZR,xmaxZR=np.sort([abs(float(xmin)/0.08333333),abs(float(xmax)/0.08333333)])
-    yminZR,ymaxZR=np.sort([abs(float(ymin)/0.08333333),abs(float(ymax)/0.08333333)])
+#    xminZR,xmaxZR=np.sort([abs(float(xmin)/0.08333333),abs(float(xmax)/0.08333333)])
+#    yminZR,ymaxZR=np.sort([abs(float(ymin)/0.08333333),abs(float(ymax)/0.08333333)])
     
     print "xminZR,xmaxZR",xminZR,xmaxZR
     print "yminZR,ymaxZR",yminZR,ymaxZR
@@ -228,7 +228,7 @@ for myfile in files:
     slope=slI[0] # égal au premier de la paire
     intercept=slI[1] 
 
-    ScaledDataMinimum= [-2,10,-2,0.01][varnum] # Nous sert dans la formule de convertion. Scaled = données mises à l'échelle.
+    ScaledDataMinimum= [-2,10,-2,0.01][varnum] # Sert dans la formule de convertion. Scaled = données mises à l'échelle.
     ScaledDataMaximum= [45,1000,45,20][varnum] # Donne les futurs min / max des unités de valeurs.
 
     vmin=ScaledDataMinimum
@@ -238,26 +238,29 @@ for myfile in files:
     ZRl3dR=(ZRl3d*slope)+intercept
     print "ZRl3d",ZRl3d
     print "ZRl3dR",ZRl3dR
-    raw_input('jkjkl')
+
     ZRl3dR[ ZRl3dR == FillValue[varnum] ] = np.nan 
 
     filen = data_out1+myfile[0:38]+'_ZR'
     print filen
 
-    #ZRl3dR = np.array([ZRl3dR]) #str(myfile[:])+'ZR'
     w = ZRl3dR.shape
     print(w)
-    numpy.save(filen, ZRl3dR)   #myfile[:])+'ZR'
+    numpy.save(filen, ZRl3dR)
     
     ZIs=[]
     while i <= p:
 
-        xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)])+179.9792)/0.04166667)),abs(round((float(d['xmax'+str(i)])+179.9792)/0.04166667))])
-        yminZI,ymaxZI=np.sort([abs(round((-float(d['ymin'+str(i)])+90)/0.04166666)),abs(round((-float(d['ymax'+str(i)])+90)/0.04166667))])
+#        xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)]))/0.08333333)),abs(round((float(d['xmax'+str(i)]))/0.08333333))])
+#        yminZI,ymaxZI=np.sort([abs(round((float(d['ymin'+str(i)]))/0.08333333)),abs(round((float(d['ymax'+str(i)]))/0.08333333))])
+       
+        xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)])+179.9792)/0.04166666)),abs(round((float(d['xmax'+str(i)])+179.9792)/0.04166666))])
+        yminZI,ymaxZI=np.sort([abs(round((float(-d['ymin'+str(i)])+90)/0.04166666)),abs(round((float(-d['ymax'+str(i)])+90)/0.04166666))])
 #        ymaxZI = abs(int(d['ymax'+str(i)])*43.2964)
 #        yminZI = abs(int(d['ymin'+str(i)])*43.2964)
 #        xmaxZI = abs(int(d['xmax'+str(i)])*43.2964)
 #        xminZI = abs(int(d['xmin'+str(i)])*43.2964)
+
         print xminZI, xmaxZI
         print yminZI, ymaxZI
 #        l3d[ (l3d < vmin) & (l3d != FillValue) ] = vmin #

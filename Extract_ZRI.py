@@ -2,7 +2,7 @@
 """
 Created on Thu May 28 14:32:07 2015
 
-@author: Terence
+@author: Terence, Pierre-Alain
 """
 
 

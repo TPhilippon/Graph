@@ -2,7 +2,7 @@
 """
 Created on Thu May 28 14:32:07 2015
 
-@author: upression1
+@author: Terence
 """
 
 
@@ -19,6 +19,7 @@ import numpy
 # =========================== Definition Varaibles =======================
 varnum = 3
 variable = ['nsst_8d', 'pic_8d', 'sst11mic_8d', 'chl_8d'][varnum]
+border=0.5 # marge autour des ZI pour la zoom
 
 #data_out ='Y:\\home\\pressions\\SATELITIME\\sdatats\\Graph_data\\'   #Win
 #data_in ='Y:\\SATELITIME\\ddata\\'+str(variable)+'\\hdf'
@@ -72,10 +73,10 @@ y=0
 #ymin = llcrnrlat
 #xmax = urcrnrlon
 #xmin = llcrnrlon
-ymax = 30
-ymin = -7
-xmax = -33
-xmin = -100
+ymax =90# 30
+ymin =89.5#-7
+xmax = -179#-33
+xmin = -180#-100
 
     #------------ Choix de la zone d'intérêt
 print ("Choix des zones d'intérêt (ZI). Patientez...")
@@ -83,7 +84,7 @@ print ("Choix des zones d'intérêt (ZI). Patientez...")
 m = Basemap(projection='cyl',llcrnrlat=ymin, urcrnrlat=ymax, llcrnrlon=xmin, urcrnrlon=xmax,resolution='c')
 m.drawlsmask(land_color='black',ocean_color='None',lakes=True)
 im=Image.open(img)
-im = plt.imshow(im,extent=(x-180,x+180,y+90,y-90), interpolation='none')
+im2 = plt.imshow(im,extent=(x-180,x+180,y+90,y-90), interpolation='none')
 plt.show()
 
 j =raw_input('Combien de ZI à délimiter?: ')
@@ -102,32 +103,51 @@ while i < j: # Selection des ZI
     print "ZI restantes:"
     print j
     print "Entrez vos coordonnées:"
-    urcrnrlat =raw_input('ymax : ')
-    llcrnrlat =raw_input('ymin : ')
-    urcrnrlon =raw_input('xmax : ')
-    llcrnrlon =raw_input('xmin : ')
+    
+    urcrnrlat = 14.75
+    llcrnrlat =14.60 
+    urcrnrlon =-60.65 
+    llcrnrlon =-60.80
+    
+#    urcrnrlat =float(raw_input('ymax : '))
+#    llcrnrlat =float(raw_input('ymin : '))
+#    urcrnrlon =float(raw_input('xmax : '))
+#    llcrnrlon =float(raw_input('xmin : '))
+    
     choix =raw_input('Valider o/n?: ')
     
     if choix =="o": 
         # ==== trouver lesbornes de l'ensemble des ZI pour un zoom =====
-        if (float(llcrnrlat)) < latmin:
-            latmin = llcrnrlat
-        if (float(urcrnrlat)) > latmax:
-            latmax = urcrnrlat
-        if (float(llcrnrlon)) < longmin:
-            longmin = llcrnrlon
-        if (float(urcrnrlon)) > longmax:
-            longmax = urcrnrlon
-            
+        
+        latmin=min(latmin,llcrnrlat)
+        latmax=max(latmax,urcrnrlat)   
+        longmin=min(longmin,llcrnrlon)
+        longmax=max(longmax,urcrnrlon)
+
+           
+#        llcrnrlat_test = llcrnrlat
+#        urcrnrlat_test = urcrnrlat
+#        llcrnrlon_test = llcrnrlon
+#        urcrnrlon_test = urcrnrlon
+#        
+#        if (float(llcrnrlat_test)) <= latmin:
+#            latmin = llcrnrlat_test
+#        if (float(urcrnrlat_test)) >= latmax:
+#            latmax = urcrnrlat_test
+#        if (float(llcrnrlon_test)) <= longmin:
+#            longmin = llcrnrlon_test
+#        if (float(urcrnrlon_test)) >= longmax:
+#            longmax = urcrnrlon_test
+        
         print "Coordonnées validées."
         j = j - 1
         # ==============================================================
         # =====Arrondi pour ajuster le cadre au pixel près =============
         
-        urcrnrlat = round((90-float(urcrnrlat))/0.0416666)
-        llcrnrlat = round((90-float(llcrnrlat))/0.0416666)
-        urcrnrlon = round((float(urcrnrlon)+179.9792)/0.0416666)
-        llcrnrlon = round((float(llcrnrlon)+179.9792)/0.0416666)
+        urcrnrlat = round((90-(urcrnrlat))/0.0416666) # Conversion en pixel
+        llcrnrlat = round((90-(llcrnrlat))/0.0416666)
+        urcrnrlon = round(((urcrnrlon)+179.9792)/0.0416667)
+        llcrnrlon = round(((llcrnrlon)+179.9792)/0.0416667)
         
 #        urcrnrlat = round(float(urcrnrlat)/0.08333333)
 #        llcrnrlat = round(float(llcrnrlat)/0.08333333)
@@ -135,10 +155,10 @@ while i < j: # Selection des ZI
 #        llcrnrlon = round(float(llcrnrlon)/0.08333333)
         print urcrnrlat
         
-        d['ymax'+str(n)] = (90-(int(urcrnrlat)*0.0416666))
-        d['ymin'+str(n)] = (90-(int(llcrnrlat)*0.0416666))
-        d['xmax'+str(n)] = ((int(urcrnrlon)*0.04166667)-179.9792)
-        d['xmin'+str(n)] = ((int(llcrnrlon)*0.04166667)-179.9792)
+        d['ymax'+str(n)] = (90-((urcrnrlat)*0.0416666)) # Stockage en degré corrigé
+        d['ymin'+str(n)] = (90-((llcrnrlat)*0.0416666))
+        d['xmax'+str(n)] = ((urcrnrlon)*0.04166667)-179.9792
+        d['xmin'+str(n)] = ((llcrnrlon)*0.04166667)-179.9792
         
 #        d['ymax'+str(n)] = urcrnrlat*0.08333333
 #        d['ymin'+str(n)] = llcrnrlat*0.08333333
@@ -146,11 +166,12 @@ while i < j: # Selection des ZI
 #        d['xmin'+str(n)] = llcrnrlon*0.08333333
         # ==============================================================
         
+        # Cadre de la ZI
         lats2 = [ d["ymin"+str(n)], d["ymax"+str(n)], d["ymax"+str(n)], d["ymin"+str(n)] ]
         lons2 = [ d["xmin"+str(n)], d["xmin"+str(n)], d["xmax"+str(n)], d["xmax"+str(n)] ]
         
         print lats2,lons2
-        draw_screen_poly2( lats2, lons2, m )
+        draw_screen_poly2( lats2, lons2, m ) # Dessin des cadres des ZI
         n = n + 1
         
     else:
@@ -158,18 +179,19 @@ while i < j: # Selection des ZI
         
 print "Chargement..."
 
-latminr = (float(latmin)-0.1)
-latmaxr = (float(latmax)+0.1)
-longminr = (float(longmin)-0.1)
-longmaxr = (float(longmax)+0.1)
+latminr = (float(latmin)-border)
+latmaxr = (float(latmax)+border)
+longminr = (float(longmin)-border)
+longmaxr = (float(longmax)+border)
 
 lats = [ latminr, latmaxr, latmaxr, latminr ]
 lons = [ longminr, longminr, longmaxr, longmaxr ]
 
+print 'x,y',x,y
 m = Basemap(projection='cyl',llcrnrlat=latminr, urcrnrlat=latmaxr, llcrnrlon=longminr, urcrnrlon=longmaxr,resolution='c')
 m.drawlsmask(land_color='black',ocean_color='None',lakes=True)
 im=Image.open(img)
-im = plt.imshow(im,extent=(x-180,x+180,y+90,y-90), interpolation='none')
+im = plt.imshow(im,extent=(x-179.9792,x+179.9792,y+90,y-90), interpolation='none')
         
 #def draw_screen_poly( lats, lons, m):   #(ancien Rectangle ZR)
 #    x, y = m( lons, lats )
@@ -181,7 +203,7 @@ im = plt.imshow(im,extent=(x-180,x+180,y+90,y-90), interpolation='none')
     
 plt.show()
 
-sys.exit()
+#sys.exit()
 
 #--------------------- Lecture hdf et Extraction (save) ---------------------
 
@@ -234,6 +256,7 @@ for myfile in files:
 
     ZRl3d=l3d[yminZR:ymaxZR,xminZR:xmaxZR] # Echantilloner. Distance lignes puis colonnes.
     ZRl3dR=(ZRl3d*slope)+intercept
+    
     print "ZRl3d",ZRl3d
     print "ZRl3dR",ZRl3dR
 
@@ -266,6 +289,7 @@ for myfile in files:
         ZIl3dR=(ZIl3d*slope)+intercept
         #ZIl3dR=np.dot(ZIl3dR,1.0) #   
         ZIl3dR[ ZIl3dR == FillValue[varnum] ] = np.nan #0.011 0.00001 #
+        print "nombre de pixels : ", ZIl3d.size, np.prod(ZIl3d.shape)
         
         
         #ZIl3dR = np.array([ZIl3dR])

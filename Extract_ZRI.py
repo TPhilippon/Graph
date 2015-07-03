@@ -38,7 +38,7 @@ def draw_screen_poly2( lats2, lons2, m):
 print "Choix de la zone régionale, patienez..."
 #m = Basemap(projection='cyl',resolution='c')
 #m.drawlsmask(land_color='black',ocean_color='None',lakes=True)
-img = '/home/pressions/SATELITIME/sdatats/Graph_data/V20120012012366.L3m_YR_NPP_CHL_chlor_a_9km.nc.png'
+img = '/home/pressions/SATELITIME/sdatats/Graph_data/V20120012012366.L3m_YR_NPP_CHL_chlor_a_4km.nc.png'
 #im=Image.open(img)
 x=0
 y=0
@@ -110,13 +110,13 @@ while i < j: # Selection des ZI
     
     if choix =="o": 
         # ==== trouver lesbornes de l'ensemble des ZI pour un zoom =====
-        if abs(float(llcrnrlat)) < latmin:
+        if (float(llcrnrlat)) < latmin:
             latmin = llcrnrlat
-        if abs(float(urcrnrlat)) > latmax:
+        if (float(urcrnrlat)) > latmax:
             latmax = urcrnrlat
-        if abs(float(llcrnrlon)) < longmin:
+        if (float(llcrnrlon)) < longmin:
             longmin = llcrnrlon
-        if abs(float(urcrnrlon)) > longmax:
+        if (float(urcrnrlon)) > longmax:
             longmax = urcrnrlon
             
         print "Coordonnées validées."
@@ -124,10 +124,10 @@ while i < j: # Selection des ZI
         # ==============================================================
         # =====Arrondi pour ajuster le cadre au pixel près =============
         
-        urcrnrlat = round((90-float(urcrnrlat))/0.04166666)
-        llcrnrlat = round((90-float(llcrnrlat))/0.04166666)
-        urcrnrlon = round((float(urcrnrlon)+180)/0.04166667)
-        llcrnrlon = round((float(llcrnrlon)+180)/0.04166667)
+        urcrnrlat = round((90-float(urcrnrlat))/0.0416666)
+        llcrnrlat = round((90-float(llcrnrlat))/0.0416666)
+        urcrnrlon = round((float(urcrnrlon)+179.9792)/0.0416666)
+        llcrnrlon = round((float(llcrnrlon)+179.9792)/0.0416666)
         
 #        urcrnrlat = round(float(urcrnrlat)/0.08333333)
 #        llcrnrlat = round(float(llcrnrlat)/0.08333333)
@@ -135,10 +135,10 @@ while i < j: # Selection des ZI
 #        llcrnrlon = round(float(llcrnrlon)/0.08333333)
         print urcrnrlat
         
-        d['ymax'+str(n)] = (90-(int(urcrnrlat)*0.04166666))
-        d['ymin'+str(n)] = (90-(int(llcrnrlat)*0.04166666))
-        d['xmax'+str(n)] = ((int(urcrnrlon)*0.04166667)-180)
-        d['xmin'+str(n)] = (int(llcrnrlon)*0.04166667)-180)
+        d['ymax'+str(n)] = (90-(int(urcrnrlat)*0.0416666))
+        d['ymin'+str(n)] = (90-(int(llcrnrlat)*0.0416666))
+        d['xmax'+str(n)] = ((int(urcrnrlon)*0.04166667)-179.9792)
+        d['xmin'+str(n)] = ((int(llcrnrlon)*0.04166667)-179.9792)
         
 #        d['ymax'+str(n)] = urcrnrlat*0.08333333
 #        d['ymin'+str(n)] = llcrnrlat*0.08333333
@@ -181,6 +181,7 @@ im = plt.imshow(im,extent=(x-180,x+180,y+90,y-90), interpolation='none')
     
 plt.show()
 
+sys.exit()
 
 #--------------------- Lecture hdf et Extraction (save) ---------------------
 
@@ -196,8 +197,6 @@ files = os.listdir(data_in) #Liste les fichiers.
 files.sort() #Trie les fichiers.
 print len(files) #len = longueur de la liste de fichiers.
 
-#l = []
-#s=0
 
 for myfile in files:
     
@@ -209,13 +208,12 @@ for myfile in files:
     #print 'min/max :', l3d.min(),l3d.max() # On peut demander les valeurs min / max.
     l3d = np.dot(l3d,1.0)
 
-
 #    xminZR,xmaxZR=np.sort([abs(float(xmin)*43.2964),abs(float(xmax)*43.2964)])
 #    yminZR,ymaxZR=np.sort([abs(float(ymin)*43.2964),abs(float(ymax)*43.2964)])
     
-    xminZR,xmaxZR=np.sort([abs(float(xmin+179.9792)/0.04166667),abs(float(xmax+179.9792)/0.04166667)])
-    yminZR,ymaxZR=np.sort([abs(float(-ymin+90)/0.04166666),abs(float(-ymax+90)/0.04166667)])
-    
+    xminZR,xmaxZR=np.sort([abs(float(xmin+179.9792)/0.0416666),abs(float(xmax+179.9792)/0.0416666)])
+    yminZR,ymaxZR=np.sort([abs(float(-ymin+90)/0.0416666),abs(float(-ymax+90)/0.0416666)])
+
 #    xminZR,xmaxZR=np.sort([abs(float(xmin)/0.08333333),abs(float(xmax)/0.08333333)])
 #    yminZR,ymaxZR=np.sort([abs(float(ymin)/0.08333333),abs(float(ymax)/0.08333333)])
     
@@ -250,12 +248,12 @@ for myfile in files:
     
     ZIs=[]
     while i <= p:
+        
+        xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)])+179.9792)/0.0416666)),abs(round((float(d['xmax'+str(i)])+179.9792)/0.0416666))])
+        yminZI,ymaxZI=np.sort([abs(round((float(90-d['ymin'+str(i)]))/0.0416666)),abs(round((float(90-d['ymax'+str(i)]))/0.0416666))])
 
-#        xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)]))/0.08333333)),abs(round((float(d['xmax'+str(i)]))/0.08333333))])
-#        yminZI,ymaxZI=np.sort([abs(round((float(d['ymin'+str(i)]))/0.08333333)),abs(round((float(d['ymax'+str(i)]))/0.08333333))])
-       
-        xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)])+179.9792)/0.04166666)),abs(round((float(d['xmax'+str(i)])+179.9792)/0.04166666))])
-        yminZI,ymaxZI=np.sort([abs(round((float(-d['ymin'+str(i)])+90)/0.04166666)),abs(round((float(-d['ymax'+str(i)])+90)/0.04166666))])
+#        xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)])+180)/0.0833333)),abs(round((float(d['xmax'+str(i)])+180)/0.0833333))])
+#        yminZI,ymaxZI=np.sort([abs(round((float(90-d['ymin'+str(i)]))/0.0833333)),abs(round((float(90-d['ymax'+str(i)]))/0.0833333))])
 #        ymaxZI = abs(int(d['ymax'+str(i)])*43.2964)
 #        yminZI = abs(int(d['ymin'+str(i)])*43.2964)
 #        xmaxZI = abs(int(d['xmax'+str(i)])*43.2964)
@@ -263,14 +261,11 @@ for myfile in files:
 
         print xminZI, xmaxZI
         print yminZI, ymaxZI
-#        l3d[ (l3d < vmin) & (l3d != FillValue) ] = vmin #
-#        l3d[ l3d > 10 ] = 10.0 #
-        l3d[ l3d == FillValue[varnum] ] = np.nan #0.011 0.00001 #
 
         ZIl3d=l3d[yminZI:ymaxZI,xminZI:xmaxZI] # Echantilloner la ZI. Distance lignes puis colonnes.
         ZIl3dR=(ZIl3d*slope)+intercept
         #ZIl3dR=np.dot(ZIl3dR,1.0) #   
-
+        ZIl3dR[ ZIl3dR == FillValue[varnum] ] = np.nan #0.011 0.00001 #
         
         
         #ZIl3dR = np.array([ZIl3dR])
@@ -280,7 +275,7 @@ for myfile in files:
         #numpy.save(filen+str(i), ZIl3dR)
         ZIs=ZIs+[(yminZI,ymaxZI,xminZI,xmaxZI,d['ymin'+str(i)],d['ymax'+str(i)],d['xmin'+str(i)],d['xmax'+str(i)]),ZIl3dR]
         i=i+1                
-
+        raw_input()
 #numpy.savez(filen, l)
     filen = data_out2+myfile[0:38]+'_ZI'  #'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.'+varg+
     print filen

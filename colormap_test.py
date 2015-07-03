@@ -17,10 +17,10 @@ import matplotlib.pyplot as plt
 
 # --------------------
 
-data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/ZI/'
-File_Name = str(data_in)+'A20022652002272.L3m_8D_CHL_chlor_a_4km_ZI.npy'
+data_in ='/home/pressions/SATELITIME/sdatats/Graph_data/ZR/'
+File_Name = str(data_in)+'A20021932002200.L3m_8D_CHL_chlor_a_4km_ZR.npy'
 #File_Name = np.dot(File_Name,1.0)
 data=np.load(File_Name)
-imgplot = plt.imshow((data[1]), interpolation='none')
+imgplot = plt.imshow((data), interpolation='none')
 plt.show()
 

@@ -34,7 +34,7 @@ def draw_screen_poly2( lats2, lons2, m):
     poly = Polygon( xy, edgecolor='black', fill=False, alpha=1.5 )
     plt.gca().add_patch(poly)
 
-#---------------------------- Choix de la zone d'étude -------------------------
+#---------------------------- Choix de la zone régionale -------------------------
 
 print "Choix de la zone régionale, patienez..."
 #m = Basemap(projection='cyl',resolution='c')
@@ -77,8 +77,8 @@ ymax =90# 30
 ymin =89.5#-7
 xmax = -179#-33
 xmin = -180#-100
-
-    #------------ Choix de la zone d'intérêt
+# -------------------------------------------------------------------------------
+#--------------------- Choix d'une/des zone(s) d'intérêt ------------------------
 print ("Choix des zones d'intérêt (ZI). Patientez...")
 
 m = Basemap(projection='cyl',llcrnrlat=ymin, urcrnrlat=ymax, llcrnrlon=xmin, urcrnrlon=xmax,resolution='c')
@@ -117,37 +117,33 @@ while i < j: # Selection des ZI
     choix =raw_input('Valider o/n?: ')
     
     if choix =="o": 
-        # ==== trouver lesbornes de l'ensemble des ZI pour un zoom =====
+   # ========== trouver lesbornes de l'ensemble des ZI pour un zoom =============
         
         latmin=min(latmin,llcrnrlat)
         latmax=max(latmax,urcrnrlat)   
         longmin=min(longmin,llcrnrlon)
         longmax=max(longmax,urcrnrlon)
-
+   # ============================================================================
            
-#        llcrnrlat_test = llcrnrlat
-#        urcrnrlat_test = urcrnrlat
-#        llcrnrlon_test = llcrnrlon
-#        urcrnrlon_test = urcrnrlon
 #        
-#        if (float(llcrnrlat_test)) <= latmin:
-#            latmin = llcrnrlat_test
-#        if (float(urcrnrlat_test)) >= latmax:
-#            latmax = urcrnrlat_test
-#        if (float(llcrnrlon_test)) <= longmin:
-#            longmin = llcrnrlon_test
-#        if (float(urcrnrlon_test)) >= longmax:
+#        if (float(llcrnrlat)) <= latmin:
+#            latmin = llcrnrlat
+#        if (float(urcrnrlat)) >= latmax:
+#            latmax = urcrnrlat
+#        if (float(llcrnrlon)) <= longmin:
+#            longmin = llcrnrlon
+#        if (float(urcrnrlon)) >= longmax:
 #            longmax = urcrnrlon_test
         
         print "Coordonnées validées."
         j = j - 1
-        # ==============================================================
-        # =====Arrondi pour ajuster le cadre au pixel près =============
+     
+     # =====Arrondi pour ajuster le cadre au pixel près ================
         
-        urcrnrlat = round((90-(urcrnrlat))/0.0416666) # Conversion en pixel
-        llcrnrlat = round((90-(llcrnrlat))/0.0416666)
-        urcrnrlon = round(((urcrnrlon)+179.9792)/0.0416667)
-        llcrnrlon = round(((llcrnrlon)+179.9792)/0.0416667)
+        urcrnrlat = round((90-(urcrnrlat))/0.04166666)   # Conversion en pixel
+        llcrnrlat = round((90-(llcrnrlat))/0.04166666)
+        urcrnrlon = round(((urcrnrlon)+180)/0.04166666)
+        llcrnrlon = round(((llcrnrlon)+180)/0.04166666)
         
 #        urcrnrlat = round(float(urcrnrlat)/0.08333333)
 #        llcrnrlat = round(float(llcrnrlat)/0.08333333)
@@ -155,10 +151,10 @@ while i < j: # Selection des ZI
 #        llcrnrlon = round(float(llcrnrlon)/0.08333333)
         print urcrnrlat
         
-        d['ymax'+str(n)] = (90-((urcrnrlat)*0.0416666)) # Stockage en degré corrigé
-        d['ymin'+str(n)] = (90-((llcrnrlat)*0.0416666))
-        d['xmax'+str(n)] = ((urcrnrlon)*0.04166667)-179.9792
-        d['xmin'+str(n)] = ((llcrnrlon)*0.04166667)-179.9792
+        d['ymax'+str(n)] = (90-((urcrnrlat)*0.04166666)) # Stockage en degré corrigé
+        d['ymin'+str(n)] = (90-((llcrnrlat)*0.04166666))
+        d['xmax'+str(n)] = ((urcrnrlon)*0.04166666)-180
+        d['xmin'+str(n)] = ((llcrnrlon)*0.04166666)-180
         
 #        d['ymax'+str(n)] = urcrnrlat*0.08333333
 #        d['ymin'+str(n)] = llcrnrlat*0.08333333
@@ -171,7 +167,7 @@ while i < j: # Selection des ZI
         lons2 = [ d["xmin"+str(n)], d["xmin"+str(n)], d["xmax"+str(n)], d["xmax"+str(n)] ]
         
         print lats2,lons2
-        draw_screen_poly2( lats2, lons2, m ) # Dessin des cadres des ZI
+        draw_screen_poly2( lats2, lons2, m )  # Dessin des cadres des ZI
         n = n + 1
         
     else:
@@ -179,7 +175,7 @@ while i < j: # Selection des ZI
         
 print "Chargement..."
 
-latminr = (float(latmin)-border)
+latminr = (float(latmin)-border)              # Encadrement de l'ensemble des ZI
 latmaxr = (float(latmax)+border)
 longminr = (float(longmin)-border)
 longmaxr = (float(longmax)+border)
@@ -204,10 +200,10 @@ im = plt.imshow(im,extent=(x-179.9792,x+179.9792,y+90,y-90), interpolation='none
 plt.show()
 
 #sys.exit()
-
+#----------------------------------------------------------------------------
 #--------------------- Lecture hdf et Extraction (save) ---------------------
 
-
+    #==================== Extraction ZR ==================================
 
 print data_in
     #nsst_8d  
@@ -215,19 +211,19 @@ print data_in
     #sst11mic_8d
     #chl_8d
 
-files = os.listdir(data_in) #Liste les fichiers.
-files.sort() #Trie les fichiers.
-print len(files) #len = longueur de la liste de fichiers.
+files = os.listdir(data_in) # Liste les fichiers.
+files.sort()                # Trie les fichiers.
+print len(files)            # len = longueur de la liste de fichiers.
 
 
-for myfile in files:
+for myfile in files:        # Boucle sur les fichiers.
     
     print myfile
     i =1
-    File = SD(data_in+myfile, SDC.READ) #   Lire depuis le hdf.
-    l3 = File.select('l3m_data') #  Et met le contenu dans File.
-    l3d = l3.get() #    Fonction get() pour avoir vraiment le tableau pour lire le hdf.
-    #print 'min/max :', l3d.min(),l3d.max() # On peut demander les valeurs min / max.
+    File = SD(data_in+myfile, SDC.READ)     #    Lire depuis le hdf.
+    l3 = File.select('l3m_data')            #    Et met le contenu dans File.
+    l3d = l3.get()                          #    Fonction get() pour avoir vraiment le tableau pour lire le hdf.
+    #print 'min/max :', l3d.min(),l3d.max() #    On peut demander les valeurs min / max.
     l3d = np.dot(l3d,1.0)
 
 #    xminZR,xmaxZR=np.sort([abs(float(xmin)*43.2964),abs(float(xmax)*43.2964)])
@@ -245,32 +241,31 @@ for myfile in files:
     title=[u'Temperature de surface en °C',u'Carbone organique particlaire (POC) en mg.m-3',u'Temperature de surfarce nocturne en °C',u'Chlorophylle en mg.m-3'][varnum]
     FillValue=[65535.0,-32767.0,-32767.0,-32767.0]
     slI=[(0.00071718,-2),(1,0),(0.00071718,-2),(1,0)][varnum] #varnum récupère pente et intercept. 
-    slope=slI[0] # égal au premier de la paire
+    slope=slI[0]                                              # égal au premier de la paire
     intercept=slI[1] 
 
-    ScaledDataMinimum= [-2,10,-2,0.01][varnum] # Sert dans la formule de convertion. Scaled = données mises à l'échelle.
-    ScaledDataMaximum= [45,1000,45,20][varnum] # Donne les futurs min / max des unités de valeurs.
+#    ScaledDataMinimum= [-2,10,-2,0.01][varnum]     # Sert dans la formule de convertion. Scaled = données mises à l'échelle.
+#    ScaledDataMaximum= [45,1000,45,20][varnum]     # Donne les futurs min / max des unités de valeurs.
 
-    vmin=ScaledDataMinimum
-    vmax=ScaledDataMaximum
-
-    ZRl3d=l3d[yminZR:ymaxZR,xminZR:xmaxZR] # Echantilloner. Distance lignes puis colonnes.
+    ZRl3d=l3d[yminZR:ymaxZR,xminZR:xmaxZR] # Echantilloner la ZR. Distance lignes puis colonnes.
     ZRl3dR=(ZRl3d*slope)+intercept
     
     print "ZRl3d",ZRl3d
     print "ZRl3dR",ZRl3dR
 
-    ZRl3dR[ ZRl3dR == FillValue[varnum] ] = np.nan 
+    ZRl3dR[ ZRl3dR == FillValue[varnum] ] = np.nan  # Annulation des valeurs extrêmes
 
-    filen = data_out1+myfile[0:38]+'_ZR'
+    filen = data_out1+myfile[0:38]+'_ZR'            # Nom du fichier sauvegardé.
     print filen
 
     w = ZRl3dR.shape
     print(w)
     numpy.save(filen, ZRl3dR)
+    # =======================================================================
+    # ====================== Extraction ZI ==================================
     
-    ZIs=[]
-    while i <= p:
+    ZIs=[]              # Liste pour sauvegarder plus de données après.
+    while i <= p:       # Boucle sur les ZI.
         
         xminZI,xmaxZI=np.sort([abs(round((float(d['xmin'+str(i)])+179.9792)/0.0416666)),abs(round((float(d['xmax'+str(i)])+179.9792)/0.0416666))])
         yminZI,ymaxZI=np.sort([abs(round((float(90-d['ymin'+str(i)]))/0.0416666)),abs(round((float(90-d['ymax'+str(i)]))/0.0416666))])
@@ -285,13 +280,11 @@ for myfile in files:
         print xminZI, xmaxZI
         print yminZI, ymaxZI
 
-        ZIl3d=l3d[yminZI:ymaxZI,xminZI:xmaxZI] # Echantilloner la ZI. Distance lignes puis colonnes.
-        ZIl3dR=(ZIl3d*slope)+intercept
-        #ZIl3dR=np.dot(ZIl3dR,1.0) #   
-        ZIl3dR[ ZIl3dR == FillValue[varnum] ] = np.nan #0.011 0.00001 #
+        ZIl3d=l3d[yminZI:ymaxZI,xminZI:xmaxZI]          # Echantilloner la ZI. Distance lignes puis colonnes.
+        ZIl3dR=(ZIl3d*slope)+intercept                  # Scaling equation (parameter value).  
+        ZIl3dR[ ZIl3dR == FillValue[varnum] ] = np.nan  # Annulation des valeurs extrêmes.
+        
         print "nombre de pixels : ", ZIl3d.size, np.prod(ZIl3d.shape)
-        
-        
         #ZIl3dR = np.array([ZIl3dR])
 #        l[s] = ZIl3dR  
 #        s=s+1   
@@ -300,11 +293,11 @@ for myfile in files:
         ZIs=ZIs+[(yminZI,ymaxZI,xminZI,xmaxZI,d['ymin'+str(i)],d['ymax'+str(i)],d['xmin'+str(i)],d['xmax'+str(i)]),ZIl3dR]
         i=i+1                
         raw_input()
-#numpy.savez(filen, l)
+    #numpy.savez(filen, l)
     filen = data_out2+myfile[0:38]+'_ZI'  #'A'+str(a)+str(format(day,'03'))+str(a)+str(format(day2,'03'))+'.'+varg+
     print filen
     numpy.save(filen, ZIs)
-
+    # ===============================================================
 
 print 'Fin'
 
